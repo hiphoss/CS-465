@@ -1,0 +1,18 @@
+[
+  {
+    "code": "B0101",
+    "name": "Cancun",
+    "length": "4 nights / 5 days",
+    "start": "February 14, 2021",
+    "resort": "Emerald Bay, 3-stars",
+    "price": "$799.00"
+  },
+  {
+    "code": "B0103",
+    "name": "Barbados",
+    "length": "5 nights / 6 days",
+    "start": "February 28, 2021",
+    "resort": "Castaway Cove, 4-stars",
+    "price": "$1,299.00"
+  }
+]
