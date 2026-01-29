@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+require('../models/db');
+const Trip = mongoose.model('Trip');
 const fs = require('fs');
 const path = require('path');
 
@@ -7,15 +10,18 @@ const home = (req, res) => {
   });
 };
 
-const travel = (req, res) => {
-  const tripsPath = path.join(__dirname, '../data/trips.json');
-  const trips = JSON.parse(fs.readFileSync(tripsPath, 'utf8'));
-
-  res.render('travel', {
-    title: 'Travel',
-    trips: trips
-  });
+const travel = async (req, res) => {
+  try {
+    const trips = await Trip.find({});
+    res.render('travel', {
+      title: 'Travel',
+      trips: trips
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
+
 
 
 module.exports = {
