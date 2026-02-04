@@ -16,10 +16,10 @@ mongoose.connection.on('disconnected', () => {
   console.log('Mongoose disconnected');
 });
 
-process.on('SIGINT', () => {
-  mongoose.connection.close(() => {
-    console.log('Mongoose disconnected through app termination');
-    process.exit(0);
-  });
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('Mongoose disconnected');
+  process.exit(0);
 });
+
 require('./trips');

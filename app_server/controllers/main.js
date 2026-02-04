@@ -10,17 +10,23 @@ const home = (req, res) => {
   });
 };
 
+const fetch = require('node-fetch');
+
 const travel = async (req, res) => {
   try {
-    const trips = await Trip.find({});
+    const response = await fetch('http://localhost:3000/api/trips');
+    const trips = await response.json();
+
     res.render('travel', {
       title: 'Travel',
       trips: trips
     });
+
   } catch (err) {
     res.status(500).send(err);
   }
 };
+
 
 
 
