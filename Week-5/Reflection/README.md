@@ -1,5 +1,3 @@
+Week 5 Reflection
 
-# Week 5 Reflection
-
-Reflection content will be added here.
-
+This week I refactored my Travlr Getaways project to use a RESTful API layer. I created API routes under /api and connected them to MongoDB using Mongoose. I tested the endpoints to confirm that trip data could be retrieved as JSON and that errors returned proper status codes. This helped me understand why separating the API from the website code makes the project easier to maintain and expand.
