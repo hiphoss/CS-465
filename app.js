@@ -1,13 +1,24 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+var mongoose = require('mongoose');
+require('./models/trips');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var tripsRouter = require('./routes/trips');
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+mongoose.connect('mongodb://127.0.0.1:27017/travlr');
+
+mongoose.connection.on('connected', () => {
+  console.log('MongoDB connected');
+});
+require('./models/trips');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -21,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', tripsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
