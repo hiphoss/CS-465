@@ -1,4 +1,23 @@
+﻿# VS / IDE
 .vs/
+.vscode/
+
+# Logs / DBs
+*.log
 *.sqlite
 *.db
-*.log
+
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular build artifacts (if an Angular app lives inside this repo)
+dist/
+.angular/
+coverage/
+
+# OS junk
+.DS_Store
+Thumbs.db
