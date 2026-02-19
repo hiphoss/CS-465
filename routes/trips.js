@@ -1,45 +1,140 @@
 /**
  * routes/trips.js
- * API routes for Trips (CRUD) + CORS headers for Angular dev server
+ * Module 7: Adds JWT authentication (register/login) and secures admin CRUD endpoints.
  *
- * IMPORTANT:
- * This router is expected to be mounted like:
+ * Expected mount:
  *   app.use('/api', require('./routes/trips'));
  *
- * So endpoints become:
- *   GET    /api/trips
- *   GET    /api/trips/:tripId
- *   POST   /api/trips
- *   PUT    /api/trips/:tripId
- *   DELETE /api/trips/:tripId
+ * Endpoints:
+ *   POST   /api/register
+ *   POST   /api/login
+ *
+ *   GET    /api/trips              (public)
+ *   GET    /api/trips/:tripId      (protected)
+ *   POST   /api/trips              (protected)
+ *   PUT    /api/trips/:tripId      (protected)
+ *   DELETE /api/trips/:tripId      (protected)
  */
 
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const { jwtSecret } = require('../config');
 
-// Uses the Trip model you already registered somewhere in your project
+// Ensure User model is registered
+require('../models/user');
+const User = mongoose.model('User');
+
+// Trip model must already be registered in your app (it is, since /api/trips works)
 const Trip = mongoose.model('Trip');
 
 /**
- * CORS middleware:
- * Allows your Angular app (http://localhost:4200) to call your API (http://localhost:3000).
- * Handles OPTIONS preflight needed for PUT/DELETE/POST.
+ * CORS middleware for Angular dev server (localhost:4200).
+ * Allows Authorization header for JWT and handles OPTIONS preflight.
  */
 router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // dev-friendly; simplest for localhost
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Preflight request
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
   }
-
   next();
 });
 
-// GET /api/trips  (get all trips)
+/**
+ * JWT auth middleware
+ */
+function requireAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: missing token' });
+  }
+
+  jwt.verify(token, jwtSecret, (err, payload) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized: invalid token' });
+    }
+    req.user = payload;
+    next();
+  });
+}
+
+/**
+ * AUTH: Register (mock admin)
+ * POST /api/register
+ * Body: { name, email, password }
+ */
+router.post('/register', async (req, res) => {
+  try {
+    const name = (req.body.name || '').trim();
+    const email = (req.body.email || '').trim().toLowerCase();
+    const password = req.body.password || '';
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
+    }
+
+    const existing = await User.findOne({ email }).exec();
+    if (existing) {
+      return res.status(409).json({ message: 'User already exists.' });
+    }
+
+    const user = new User({
+      name: name || email,
+      email,
+      hash: 'temp',
+      salt: 'temp'
+    });
+
+    user.setPassword(password);
+    await user.save();
+
+    return res.status(201).json({ token: user.generateJwt() });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Registration failed.',
+      error: err?.message ?? err
+    });
+  }
+});
+
+/**
+ * AUTH: Login
+ * POST /api/login
+ * Body: { email, password }
+ */
+router.post('/login', async (req, res) => {
+  try {
+    const email = (req.body.email || '').trim().toLowerCase();
+    const password = req.body.password || '';
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
+    }
+
+    const user = await User.findOne({ email }).exec();
+    if (!user || !user.validPassword(password)) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    return res.status(200).json({ token: user.generateJwt() });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Login failed.',
+      error: err?.message ?? err
+    });
+  }
+});
+
+/**
+ * TRIPS: GET all (public)
+ * GET /api/trips
+ */
 router.get('/trips', async (req, res) => {
   try {
     const trips = await Trip.find({}).exec();
@@ -52,8 +147,11 @@ router.get('/trips', async (req, res) => {
   }
 });
 
-// GET /api/trips/:tripId  (get one trip)
-router.get('/trips/:tripId', async (req, res) => {
+/**
+ * TRIPS: GET one (protected)
+ * GET /api/trips/:tripId
+ */
+router.get('/trips/:tripId', requireAuth, async (req, res) => {
   try {
     const { tripId } = req.params;
 
@@ -62,7 +160,6 @@ router.get('/trips/:tripId', async (req, res) => {
     }
 
     const trip = await Trip.findById(tripId).exec();
-
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found.' });
     }
@@ -76,10 +173,12 @@ router.get('/trips/:tripId', async (req, res) => {
   }
 });
 
-// POST /api/trips  (create a new trip)
-router.post('/trips', async (req, res) => {
+/**
+ * TRIPS: POST create (protected)
+ * POST /api/trips
+ */
+router.post('/trips', requireAuth, async (req, res) => {
   try {
-    // Accept either perPerson OR legacy price, but normalize to perPerson for your new schema
     const perPerson = req.body.perPerson ?? req.body.price;
 
     const newTrip = {
@@ -88,11 +187,8 @@ router.post('/trips', async (req, res) => {
       length: req.body.length,
       start: req.body.start,
       resort: req.body.resort,
-
-      // Store both if you want backwards compatibility with older code
       perPerson: perPerson,
       price: req.body.price ?? perPerson,
-
       image: req.body.image,
       description: req.body.description
     };
@@ -100,11 +196,9 @@ router.post('/trips', async (req, res) => {
     const created = await Trip.create(newTrip);
     return res.status(201).json(created);
   } catch (err) {
-    // Mongoose validation errors should be 400
     if (err?.name === 'ValidationError') {
       return res.status(400).json(err);
     }
-
     return res.status(500).json({
       message: 'Failed to create trip.',
       error: err?.message ?? err
@@ -112,8 +206,11 @@ router.post('/trips', async (req, res) => {
   }
 });
 
-// PUT /api/trips/:tripId  (update an existing trip)
-router.put('/trips/:tripId', async (req, res) => {
+/**
+ * TRIPS: PUT update (protected)
+ * PUT /api/trips/:tripId
+ */
+router.put('/trips/:tripId', requireAuth, async (req, res) => {
   try {
     const { tripId } = req.params;
 
@@ -121,7 +218,6 @@ router.put('/trips/:tripId', async (req, res) => {
       return res.status(400).json({ message: 'Invalid tripId format.' });
     }
 
-    // Allow partial updates, but normalize perPerson if price was sent
     const perPerson = req.body.perPerson ?? req.body.price;
 
     const update = {
@@ -134,13 +230,11 @@ router.put('/trips/:tripId', async (req, res) => {
       description: req.body.description
     };
 
-    // Only set these if provided
     if (perPerson !== undefined) {
       update.perPerson = perPerson;
-      update.price = req.body.price ?? perPerson; // optional backwards compatibility
+      update.price = req.body.price ?? perPerson;
     }
 
-    // Remove undefined keys so we don't overwrite fields with undefined
     Object.keys(update).forEach((k) => update[k] === undefined && delete update[k]);
 
     const updated = await Trip.findByIdAndUpdate(tripId, update, {
@@ -157,7 +251,6 @@ router.put('/trips/:tripId', async (req, res) => {
     if (err?.name === 'ValidationError') {
       return res.status(400).json(err);
     }
-
     return res.status(500).json({
       message: 'Failed to update trip.',
       error: err?.message ?? err
@@ -165,8 +258,11 @@ router.put('/trips/:tripId', async (req, res) => {
   }
 });
 
-// DELETE /api/trips/:tripId  (delete a trip)
-router.delete('/trips/:tripId', async (req, res) => {
+/**
+ * TRIPS: DELETE (protected)
+ * DELETE /api/trips/:tripId
+ */
+router.delete('/trips/:tripId', requireAuth, async (req, res) => {
   try {
     const { tripId } = req.params;
 
@@ -175,12 +271,10 @@ router.delete('/trips/:tripId', async (req, res) => {
     }
 
     const deleted = await Trip.findByIdAndDelete(tripId).exec();
-
     if (!deleted) {
       return res.status(404).json({ message: 'Trip not found.' });
     }
 
-    // 204 = success, no content
     return res.sendStatus(204);
   } catch (err) {
     return res.status(500).json({
