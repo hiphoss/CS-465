@@ -2,7 +2,7 @@
 
 ## Architecture
 
-In this project, I used two different types of frontend development: Express with server-rendered HTML (using Jade templates) and an Angular single-page application (SPA). The Express side followed the Model-View-Controller (MVC) pattern. Routes handled requests, models connected to MongoDB, and views rendered dynamic data for the customer-facing website. This approach reloads pages when navigating and relies on server-side rendering.
+I used two different types of frontend development: Express with server-rendered HTML (using Jade templates) and an Angular single-page application (SPA). The Express side followed the Model-View-Controller (MVC) pattern. Routes handled requests, models connected to MongoDB, and views rendered dynamic data for the customer-facing website. This approach reloads pages when navigating and relies on server-side rendering.
 
 The Angular SPA was used for the administrator interface. Unlike the Express frontend, the SPA updates content dynamically without reloading the entire page. It communicates with the backend using RESTful API calls. This created a clearer separation between presentation logic and data handling. Using both approaches in one project helped me understand the difference between traditional server-rendered web apps and modern client-side applications.
 
