@@ -2,6 +2,16 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/css/style.css')
   body
+    header
+      img(src='/images/logo.png', alt='Travlr Logo')
+      nav
+        ul
+          li: a(href='/') Home
+          li: a(href='/travel') Travel
+          li: a(href='/news') News
+          li: a(href='/reservations') Reservations
+          li: a(href='/admin') Admin
+          li: a(href='/login') Login
     block content

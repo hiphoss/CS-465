@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title
+  table(border="1")
+    tr
+      th Name
+      th Length
+      th Resort
+      th Per Person
+    each trip in trips
+      tr
+        td= trip.name
+        td= trip.length
+        td= trip.resort
+        td= trip.perPerson
