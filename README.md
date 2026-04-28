@@ -81,7 +81,8 @@ This project helped me understand how full-stack web applications are structured
 - Managing travel package data through administrator functionality
 - Debugging routing and data display issues
 - Understanding how public-facing pages and backend logic interact
-- Skills Demonstrated
+  
+## Skills Demonstrated
 - Full-stack web development
 - Node.js and Express routing
 - MongoDB database interaction
@@ -93,9 +94,9 @@ This project helped me understand how full-stack web applications are structured
 - Technical documentation
 
 Author
-Shane Colledge
-Computer Science Graduate
-GitHub: https://github.com/hiphoss
+- Shane Colledge
+- Computer Science Graduate
+- GitHub: https://github.com/hiphoss
 
 ## Project Structure
 
