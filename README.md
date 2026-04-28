@@ -56,19 +56,6 @@ Testing and quality-related review included:
 
 Because this was an academic full-stack development project, testing was primarily manual and focused on confirming that the application worked as expected during development.
 
-## Project Structure
-
-```text
-CS-465/
-├── bin/                 # Server startup files
-├── public/              # Static assets such as stylesheets, images, and scripts
-├── routes/              # Express route files
-├── views/               # Jade/Pug view templates
-├── app.js               # Main Express application configuration
-├── package.json         # Project dependencies and scripts
-├── package-lock.json    # Dependency lock file
-└── README.md            # Project documentation
-
 # How to Run the Project
 1. Clone the repository:
 - git clone https://github.com/hiphoss/CS-465.git
@@ -109,3 +96,18 @@ Author
 Shane Colledge
 Computer Science Graduate
 GitHub: https://github.com/hiphoss
+
+## Project Structure
+
+```text
+CS-465/
+├── bin/                 # Server startup files
+├── public/              # Static assets such as stylesheets, images, and scripts
+├── routes/              # Express route files
+├── views/               # Jade/Pug view templates
+├── app.js               # Main Express application configuration
+├── package.json         # Project dependencies and scripts
+├── package-lock.json    # Dependency lock file
+└── README.md            # Project documentation
+
+
