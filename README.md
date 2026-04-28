@@ -68,3 +68,44 @@ CS-465/
 ├── package.json         # Project dependencies and scripts
 ├── package-lock.json    # Dependency lock file
 └── README.md            # Project documentation
+
+# How to Run the Project
+1. Clone the repository:
+- git clone https://github.com/hiphoss/CS-465.git
+2. Navigate into the project folder:
+- cd CS-465
+3. Install dependencies:
+- npm install
+4. Start the application:
+- npm start
+5. Open the application in a browser:
+- http://localhost:3000
+
+# What I Learned
+
+This project helped me understand how full-stack web applications are structured and how different application layers work together. I gained experience connecting backend routes, view templates, database models, and server configuration into one working application.
+
+## Key concepts I practiced include:
+
+Building a server-side application with Node.js and Express
+Organizing routes, views, and static assets
+Connecting an application to MongoDB
+Using models to represent application data
+Managing travel package data through administrator functionality
+Debugging routing and data display issues
+Understanding how public-facing pages and backend logic interact
+Skills Demonstrated
+Full-stack web development
+Node.js and Express routing
+MongoDB database interaction
+Mongoose data modeling
+Server-side rendering
+Application organization
+Backend troubleshooting
+Manual testing and debugging
+Technical documentation
+Author
+
+Shane Colledge
+Computer Science Graduate
+GitHub: https://github.com/hiphoss
