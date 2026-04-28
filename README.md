@@ -74,25 +74,25 @@ This project helped me understand how full-stack web applications are structured
 
 ## Key concepts I practiced include:
 
-Building a server-side application with Node.js and Express
-Organizing routes, views, and static assets
-Connecting an application to MongoDB
-Using models to represent application data
-Managing travel package data through administrator functionality
-Debugging routing and data display issues
-Understanding how public-facing pages and backend logic interact
-Skills Demonstrated
-Full-stack web development
-Node.js and Express routing
-MongoDB database interaction
-Mongoose data modeling
-Server-side rendering
-Application organization
-Backend troubleshooting
-Manual testing and debugging
-Technical documentation
-Author
+- Building a server-side application with Node.js and Express
+- Organizing routes, views, and static assets
+- Connecting an application to MongoDB
+- Using models to represent application data
+- Managing travel package data through administrator functionality
+- Debugging routing and data display issues
+- Understanding how public-facing pages and backend logic interact
+- Skills Demonstrated
+- Full-stack web development
+- Node.js and Express routing
+- MongoDB database interaction
+- Mongoose data modeling
+- Server-side rendering
+- Application organization
+- Backend troubleshooting
+- Manual testing and debugging
+- Technical documentation
 
+Author
 Shane Colledge
 Computer Science Graduate
 GitHub: https://github.com/hiphoss
